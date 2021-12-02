@@ -13,6 +13,7 @@ AProjectile::AProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
+	SphereComp->SetCollisionProfileName("Projectile");
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
@@ -22,7 +23,7 @@ AProjectile::AProjectile()
 	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
-
+	MovementComp->ProjectileGravityScale = 0.0f;
 }
 
 // Called when the game starts or when spawned

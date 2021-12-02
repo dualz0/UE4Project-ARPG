@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+
 UCLASS()
 class ARPG_API ACharacterBase : public ACharacter
 {
