@@ -4,8 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Abilities/AttributeComponent.h"
 #include "CharacterBase.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+class UAnimMontage;
+class AttributeComponent;
 
 UCLASS()
 class ARPG_API ACharacterBase : public ACharacter
@@ -13,9 +18,14 @@ class ARPG_API ACharacterBase : public ACharacter
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;
 	
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* AttackAnim;
+
+	FTimerHandle TimerHandle_PrimaryAttack;
+
 public:
 	// Sets default values for this character's properties
 	ACharacterBase();
@@ -23,12 +33,15 @@ public:
 protected:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* SpringArmComp;
+	USpringArmComponent* SpringArmComp;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* CameraComp;
+	UCameraComponent* CameraComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UAttributeComponent* AttributeComp;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
@@ -39,6 +52,10 @@ protected:
 	void MoveRight(float Value);
 
 	void PrimaryAttack();
+	
+	void PrimaryAttack_TimeElapsed();
+
+	void PrimaryInteract();
 
 public:	
 	// Called every frame
