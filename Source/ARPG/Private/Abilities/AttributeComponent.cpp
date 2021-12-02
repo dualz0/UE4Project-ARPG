@@ -7,8 +7,16 @@
 UAttributeComponent::UAttributeComponent()
 {
 	Health = 100;
+	HealthMax = 100;
 }
 
+
+// void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick Tick, FActorComponentTickFunction* ThisTickFunction)
+// {
+// 	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
+// 	
+// 	ApplyHealthChange(-1);
+// }
 
 bool UAttributeComponent::ApplyHealthChange(float Delta)
 {
@@ -22,4 +30,9 @@ bool UAttributeComponent::ApplyHealthChange(float Delta)
 float UAttributeComponent::GetHealth()
 {
 	return Health;
+}
+
+float UAttributeComponent::GetHealthMax()
+{
+	return HealthMax;
 }

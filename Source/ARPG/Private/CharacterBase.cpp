@@ -56,6 +56,8 @@ void ACharacterBase::MoveRight(float Value)
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	AttributeComp->ApplyHealthChange(-1);
 }
 
 // Called to bind functionality to input

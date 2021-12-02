@@ -26,7 +26,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float HealthMax;
 
-	public:	
+	// TEST
+	// virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+public:	
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
@@ -36,5 +39,8 @@ protected:
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetHealth();
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetHealthMax();
 
 };
