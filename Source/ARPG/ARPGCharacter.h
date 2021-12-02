@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "ARPGCharacter.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS(config=Game)
 class AARPGCharacter : public ACharacter
 {
@@ -13,11 +16,11 @@ class AARPGCharacter : public ACharacter
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+	USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+	UCameraComponent* FollowCamera;
 public:
 	AARPGCharacter();
 

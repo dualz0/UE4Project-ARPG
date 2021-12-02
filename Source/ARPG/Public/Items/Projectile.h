@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
+class USphereComponent;
+class UProjectileMovementComponent;
+class UParticleSystemComponent;
+
 UCLASS()
 class ARPG_API AProjectile : public AActor
 {
@@ -16,6 +20,15 @@ public:
 	AProjectile();
 
 protected:
+	UPROPERTY(VisibleAnywhere)
+	USphereComponent* SphereComp;
+
+	UPROPERTY(VisibleAnywhere)
+	UProjectileMovementComponent* MovementComp;
+
+	UPROPERTY(VisibleAnywhere)
+	UParticleSystemComponent* EffectComp;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

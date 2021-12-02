@@ -10,7 +10,11 @@ UCLASS()
 class ARPG_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
-
+	
+protected:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
+	
 public:
 	// Sets default values for this character's properties
 	ACharacterBase();
@@ -32,6 +36,8 @@ protected:
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	void PrimaryAttack();
 
 public:	
 	// Called every frame
