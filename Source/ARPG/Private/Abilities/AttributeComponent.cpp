@@ -11,13 +11,6 @@ UAttributeComponent::UAttributeComponent()
 }
 
 
-// void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick Tick, FActorComponentTickFunction* ThisTickFunction)
-// {
-// 	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
-// 	
-// 	ApplyHealthChange(-1);
-// }
-
 bool UAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;
