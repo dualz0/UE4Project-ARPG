@@ -6,11 +6,11 @@
 // Sets default values for this component's properties
 UAttributeComponent::UAttributeComponent()
 {
-	Health = 100;
 	HealthMax = 100;
-
-	Life = 3;
+	Health = HealthMax;
+	
 	LifeMax = 3;
+	Life = LifeMax;
 }
 
 
@@ -28,13 +28,7 @@ bool UAttributeComponent::ApplyHealthChange(float Delta)
 	}
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
-
-	// TODO: Test
-	USkeletalMeshComponent* MeshComp = Cast<USkeletalMeshComponent>(GetOwner()->FindComponentByClass(USkeletalMeshComponent::StaticClass()));
-	if (MeshComp)
-	{
-		MeshComp->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
-	}
+	
 	return true;
 }
 
@@ -52,14 +46,19 @@ bool UAttributeComponent::MinusLife()
 	return true;
 }
 
-float UAttributeComponent::GetHealth()
+float UAttributeComponent::GetHealth() const
 {
 	return Health;
 }
 
-float UAttributeComponent::GetHealthMax()
+float UAttributeComponent::GetHealthMax() const
 {
 	return HealthMax;
+}
+
+bool UAttributeComponent::IsFullHealth() const
+{
+	return Health == HealthMax;
 }
 
 bool UAttributeComponent::IsAlive() const
@@ -67,12 +66,12 @@ bool UAttributeComponent::IsAlive() const
 	return Health > 0.0f;
 }
 
-float UAttributeComponent::GetLife()
+float UAttributeComponent::GetLife() const
 {
 	return Life;
 }
 
-float UAttributeComponent::GetLifeMax()
+float UAttributeComponent::GetLifeMax() const
 {
 	return LifeMax;
 }

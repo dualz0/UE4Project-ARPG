@@ -26,6 +26,8 @@ ACharacterBase::ACharacterBase()
 	bUseControllerRotationYaw = false;
 
 	AttackAnimDelay = 0.2f;
+	TimeToHitParamName = "TimeToHit";
+	HandSocketName = "Muzzle_01";
 }
 
 // Called when the game starts or when spawned
@@ -128,7 +130,7 @@ void ACharacterBase::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
 	if (ensureAlways(ClassToSpawn))
 	{
-		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 		
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -172,13 +174,10 @@ void ACharacterBase::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 
 void ACharacterBase::OnHealthChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp, float NewHealth, float Delta)
 {
-	// player died
-	// if (NewHealth <= 0.0f && Delta < 0.0f)
-	// {
-	// 	AttributeComp->MinusLife();
-	// 	APlayerController* PC = Cast<APlayerController>(GetController());
-	// 	DisableInput(PC);
-	// }
+	if (Delta < 0.0f)
+	{
+		GetMesh()->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
+	}
 }
 
 void ACharacterBase::OnLifeChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp)

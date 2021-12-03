@@ -51,15 +51,18 @@ public:
 	bool MinusLife();
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	float GetHealth();
+	float GetHealth() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	float GetHealthMax();
+	float GetHealthMax() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	float GetLife();
+	bool IsFullHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetLife() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	float GetLifeMax();
+	float GetLifeMax() const;
 
 };
