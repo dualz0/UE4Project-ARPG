@@ -29,6 +29,9 @@ protected:
 	// TODO: Test
 	FTimerHandle TestTimerHandle;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	float AttackAnimDelay;
+	
 public:
 	// Sets default values for this character's properties
 	ACharacterBase();

@@ -23,6 +23,9 @@ ACharacterBase::ACharacterBase()
 	AttributeComp = CreateDefaultSubobject<UAttributeComponent>("AttributeComp");
 	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationYaw = false;
+
+	AttackAnimDelay = 0.2f;
 }
 
 // Called when the game starts or when spawned
@@ -78,7 +81,7 @@ void ACharacterBase::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ACharacterBase::PrimaryAttack_TimeElapsed, 0.2f);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ACharacterBase::PrimaryAttack_TimeElapsed, AttackAnimDelay);
 }
 
 void ACharacterBase::PrimaryAttack_TimeElapsed()
