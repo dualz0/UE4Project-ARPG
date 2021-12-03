@@ -38,6 +38,14 @@ void ACharacterBase::BeginPlay()
 
 }
 
+void ACharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ACharacterBase::OnHealthChanged);
+	AttributeComp->OnLifeChanged.AddDynamic(this, &ACharacterBase::OnLifeChanged);
+}
+
 void ACharacterBase::MoveForward(float Value)
 {
 	FRotator ControlRot = GetControlRotation();
@@ -60,7 +68,7 @@ void ACharacterBase::MoveRight(float Value)
 
 void ACharacterBase::TestAttacked()
 {
-	AttributeComp->ApplyHealthChange(-1);
+	AttributeComp->ApplyHealthChange(-30);
 }
 
 // Called to bind functionality to input
@@ -74,6 +82,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ACharacterBase::PrimaryAttack);
+	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ACharacterBase::BlackHoleAttack);
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ACharacterBase::Dash);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 }
 
@@ -86,16 +96,97 @@ void ACharacterBase::PrimaryAttack()
 
 void ACharacterBase::PrimaryAttack_TimeElapsed()
 {
-	if (ensure(ProjectileClass))
+	SpawnProjectile(ProjectileClass);
+}
+
+void ACharacterBase::BlackHoleAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_BlackholeAttack, this, &ACharacterBase::BlackholeAttack_TimeElapsed, AttackAnimDelay);
+}
+
+
+void ACharacterBase::BlackholeAttack_TimeElapsed()
+{
+	SpawnProjectile(BlackHoleProjectileClass);
+}
+
+void ACharacterBase::Dash()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_DashAttack, this, &ACharacterBase::Dash_TimeElapsed, AttackAnimDelay);
+}
+
+
+void ACharacterBase::Dash_TimeElapsed()
+{
+	SpawnProjectile(DashProjectileClass);
+}
+void ACharacterBase::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
+{
+	if (ensureAlways(ClassToSpawn))
 	{
 		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-		FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-
+		
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		SpawnParams.Instigator = this;
 
-		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+		FHitResult Hit;
+		FVector TraceStart = CameraComp->GetComponentLocation();
+		// endpoint far into the look-at distance (not too far, still adjust somewhat towards crosshair on a miss)
+		FVector TraceEnd = CameraComp->GetComponentLocation() + (GetControlRotation().Vector() * 5000);
+
+		FCollisionShape Shape;
+		Shape.SetSphere(20.0f);
+
+		// Ignore Player
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+
+		FCollisionObjectQueryParams ObjParams;
+		ObjParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjParams.AddObjectTypesToQuery(ECC_Pawn);
+
+		FRotator ProjRotation;
+		// true if we got to a blocking hit (Alternative: SweepSingleByChannel with ECC_WorldDynamic)
+		if (GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjParams, Shape, Params))
+		{
+			// Adjust location to end up at crosshair look-at
+			ProjRotation = FRotationMatrix::MakeFromX(Hit.ImpactPoint - HandLocation).Rotator();
+		}
+		else
+		{
+			// Fall-back since we failed to find any blocking hit
+			ProjRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
+		}
+
+
+		FTransform SpawnTM = FTransform(ProjRotation, HandLocation);
+		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
 	}
 }
+
+void ACharacterBase::OnHealthChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp, float NewHealth, float Delta)
+{
+	// player died
+	// if (NewHealth <= 0.0f && Delta < 0.0f)
+	// {
+	// 	AttributeComp->MinusLife();
+	// 	APlayerController* PC = Cast<APlayerController>(GetController());
+	// 	DisableInput(PC);
+	// }
+}
+
+void ACharacterBase::OnLifeChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp)
+{
+	// GameOver
+	if (AttributeComp->GetLife() <= 0)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		DisableInput(PC);
+	}
+} 

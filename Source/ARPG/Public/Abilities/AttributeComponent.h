@@ -8,6 +8,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, UAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLifeChanged, AActor*, InstigatorActor, UAttributeComponent*, OwningComp);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -25,19 +26,40 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float HealthMax;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float Life;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float LifeMax;
 	
 public:	
 
+	UFUNCTION(BlueprintCallable)
+	bool IsAlive() const;
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnLifeChanged OnLifeChanged;
+
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(float Delta);
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool MinusLife();
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetHealth();
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetHealthMax();
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetLife();
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetLifeMax();
 
 };

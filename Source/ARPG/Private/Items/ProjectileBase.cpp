@@ -36,11 +36,6 @@ void AProjectileBase::Explode_Implementation()
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
 
-		EffectComp->DeactivateSystem();
-
-		MoveComp->StopMovementImmediately();
-		SetActorEnableCollision(false);
-
 		Destroy();
 	}
 }
@@ -48,4 +43,5 @@ void AProjectileBase::Explode_Implementation()
 void AProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 }

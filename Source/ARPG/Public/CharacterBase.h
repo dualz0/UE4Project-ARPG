@@ -20,12 +20,20 @@ class ARPG_API ACharacterBase : public ACharacter
 protected:
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> BlackHoleProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> DashProjectileClass;
 	
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
-
+	FTimerHandle TimerHandle_BlackholeAttack;
+	FTimerHandle TimerHandle_DashAttack;
+	
 	// TODO: Test
 	FTimerHandle TestTimerHandle;
 
@@ -60,8 +68,27 @@ protected:
 	void PrimaryAttack();
 	
 	void PrimaryAttack_TimeElapsed();
+	
+	void BlackHoleAttack();
+
+	void BlackholeAttack_TimeElapsed();
+
+	void Dash();
+
+	void Dash_TimeElapsed();
+
+	// Re-use spawn logic between attacks
+	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
 
 	void PrimaryInteract();
+	
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	UFUNCTION()
+	void OnLifeChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp);
+
+	virtual void PostInitializeComponents() override;
 
 public:	
 	void TestAttacked();
