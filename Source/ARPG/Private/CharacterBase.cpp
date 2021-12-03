@@ -11,7 +11,6 @@
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
@@ -30,6 +29,10 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// TODO: Test Attacked
+	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &ACharacterBase::TestAttacked, 2.0f, true, 5.0f);
+
 }
 
 void ACharacterBase::MoveForward(float Value)
@@ -52,11 +55,8 @@ void ACharacterBase::MoveRight(float Value)
 	AddMovementInput(RightVector, Value);
 }
 
-// Called every frame
-void ACharacterBase::Tick(float DeltaTime)
+void ACharacterBase::TestAttacked()
 {
-	Super::Tick(DeltaTime);
-	
 	AttributeComp->ApplyHealthChange(-1);
 }
 

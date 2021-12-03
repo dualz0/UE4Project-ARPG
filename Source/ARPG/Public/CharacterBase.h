@@ -26,6 +26,9 @@ protected:
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 
+	// TODO: Test
+	FTimerHandle TestTimerHandle;
+
 public:
 	// Sets default values for this character's properties
 	ACharacterBase();
@@ -58,8 +61,7 @@ protected:
 	void PrimaryInteract();
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	void TestAttacked();
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

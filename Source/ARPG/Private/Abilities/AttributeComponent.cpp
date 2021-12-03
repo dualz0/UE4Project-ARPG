@@ -17,6 +17,12 @@ bool UAttributeComponent::ApplyHealthChange(float Delta)
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
 
+	// TODO: Test
+	USkeletalMeshComponent* MeshComp = Cast<USkeletalMeshComponent>(GetOwner()->FindComponentByClass(USkeletalMeshComponent::StaticClass()));
+	if (MeshComp)
+	{
+		MeshComp->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
+	}
 	return true;
 }
 
