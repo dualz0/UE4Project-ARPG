@@ -19,7 +19,7 @@ AAICharacter::AAICharacter()
     
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
     
-    TimeToHitParamName = "TimeToHit";
+    TimeToHitParamName = "HitFlashTime";
 }
     
     
