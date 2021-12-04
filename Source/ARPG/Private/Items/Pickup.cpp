@@ -2,26 +2,53 @@
 
 
 #include "Items/Pickup.h"
+#include "Abilities/AttributeComponent.h"
+#include "Components/SphereComponent.h"
 
-// Sets default values
 APickup::APickup()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
+	SphereComp->SetCollisionProfileName("Pickup");
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnActorBeginOverlap);
+	RootComponent = SphereComp;
 
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MeshComp->SetupAttachment(RootComponent);
+
+	RespawnTime = 10.0f;
+	HealValue = 50.0f;
 }
 
-// Called when the game starts or when spawned
-void APickup::BeginPlay()
+void APickup::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Super::BeginPlay();
+	if (OtherActor)
+	{
+		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
+		if (AttributeComp && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
+		{
+			AttributeComp->ApplyHealthChange(HealValue);
+			HideAndCooldownPowerup();
+		}
+	}
+}
+
+void APickup::ShowPowerup()
+{
+	SetPowerupState(true);
+}
+
+
+void APickup::HideAndCooldownPowerup()
+{
+	SetPowerupState(false);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_RespawnTimer, this, &APickup::ShowPowerup, RespawnTime);
+}
+
+void APickup::SetPowerupState(bool bNewIsActive)
+{
+	SetActorEnableCollision(bNewIsActive);
 	
+	RootComponent->SetVisibility(bNewIsActive, true);
 }
-
-// Called every frame
-void APickup::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
