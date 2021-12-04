@@ -11,6 +11,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UAnimMontage;
 class AttributeComponent;
+class UParticleSystem;
 
 UCLASS()
 class ARPG_API ACharacterBase : public ACharacter
@@ -36,33 +37,33 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_BlackholeAttack;
-	FTimerHandle TimerHandle_DashAttack;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UParticleSystem* AttackEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	float AttackAnimDelay;
+
+	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_BlackholeAttack;
+	FTimerHandle TimerHandle_DashAttack;
+	
+	FTimerHandle TimerHandle_Reborn;
 	
 public:
-	// Sets default values for this character's properties
 	ACharacterBase();
 
 protected:
-	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
-
-	/** Follow camera */
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UAttributeComponent* AttributeComp;
-
-	/** Called for forwards/backward input */
+	
 	void MoveForward(float Value);
-
-	/** Called for side to side input */
+	
 	void MoveRight(float Value);
 
 	void PrimaryAttack();
@@ -77,10 +78,9 @@ protected:
 
 	void Dash_TimeElapsed();
 
-	// Re-use spawn logic between attacks
+	void StartAttackEffects();
+	
 	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
-
-	void PrimaryInteract();
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp, float NewHealth, float Delta);
@@ -91,9 +91,6 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 public:	
-	void TestAttacked();
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };

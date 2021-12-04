@@ -56,7 +56,8 @@ bool UAttributeComponent::IsFullHealth() const
 
 bool UAttributeComponent::IsAlive() const
 {
-	return Health > 0.0f;
+	// return Health > 0.0f;
+	return Life >= 0;
 }
 
 float UAttributeComponent::GetLife() const

@@ -6,7 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -58,11 +58,6 @@ void ACharacterBase::MoveRight(float Value)
 	AddMovementInput(RightVector, Value);
 }
 
-void ACharacterBase::TestAttacked()
-{
-	AttributeComp->ApplyHealthChange(-30);
-}
-
 // Called to bind functionality to input
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -81,7 +76,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ACharacterBase::PrimaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
+	StartAttackEffects();
 
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ACharacterBase::PrimaryAttack_TimeElapsed, AttackAnimDelay);
 }
@@ -93,7 +88,7 @@ void ACharacterBase::PrimaryAttack_TimeElapsed()
 
 void ACharacterBase::BlackHoleAttack()
 {
-	PlayAnimMontage(AttackAnim);
+	StartAttackEffects();
 
 	GetWorldTimerManager().SetTimer(TimerHandle_BlackholeAttack, this, &ACharacterBase::BlackholeAttack_TimeElapsed, AttackAnimDelay);
 }
@@ -106,7 +101,7 @@ void ACharacterBase::BlackholeAttack_TimeElapsed()
 
 void ACharacterBase::Dash()
 {
-	PlayAnimMontage(AttackAnim);
+	StartAttackEffects();
 
 	GetWorldTimerManager().SetTimer(TimerHandle_DashAttack, this, &ACharacterBase::Dash_TimeElapsed, AttackAnimDelay);
 }
@@ -116,6 +111,14 @@ void ACharacterBase::Dash_TimeElapsed()
 {
 	SpawnProjectile(DashProjectileClass);
 }
+
+void ACharacterBase::StartAttackEffects()
+{
+	PlayAnimMontage(AttackAnim);
+
+	UGameplayStatics::SpawnEmitterAttached(AttackEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
+}
+
 void ACharacterBase::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
 	if (ensureAlways(ClassToSpawn))
@@ -177,5 +180,9 @@ void ACharacterBase::OnLifeChanged(AActor* InstigatorActor, UAttributeComponent*
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
+	}
+	else
+	{
+		// Reborn
 	}
 } 
