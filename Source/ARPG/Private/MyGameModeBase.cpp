@@ -78,7 +78,13 @@ int32 AMyGameModeBase::GetAliveBotsNum()
 	int32 AliveBotsNum = 0;
 	for (TActorIterator<AAICharacter> It(GetWorld()); It; ++It)
 	{
-		AliveBotsNum++;
+		AAICharacter* Bot = *It;
+
+		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(Bot->GetComponentByClass(UAttributeComponent::StaticClass()));
+		if (AttributeComp && AttributeComp->IsAlive())
+		{
+			AliveBotsNum++;
+		}
 	}
 	return AliveBotsNum;
 }

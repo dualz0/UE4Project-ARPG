@@ -17,8 +17,13 @@ class ARPG_API UAttributeComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UAttributeComponent();
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static UAttributeComponent* GetAttributeComp(AActor* FromActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
+	static bool IsActorAlive(AActor* Actor);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
@@ -45,10 +50,13 @@ public:
 	FOnLifeChanged OnLifeChanged;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool MinusLife();
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool SetLife(int32 NewLife);
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetHealth() const;

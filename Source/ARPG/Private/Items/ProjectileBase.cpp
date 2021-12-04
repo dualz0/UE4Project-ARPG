@@ -7,7 +7,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
+
 AProjectileBase::AProjectileBase()
 {
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");

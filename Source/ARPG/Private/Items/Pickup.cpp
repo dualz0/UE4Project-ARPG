@@ -27,7 +27,7 @@ void APickup::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
 		if (AttributeComp && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
 		{
-			AttributeComp->ApplyHealthChange(HealValue);
+			AttributeComp->ApplyHealthChange(this, HealValue);
 			HideAndCooldownPowerup();
 		}
 	}

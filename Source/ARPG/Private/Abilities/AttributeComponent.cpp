@@ -3,7 +3,7 @@
 
 #include "Abilities/AttributeComponent.h"
 
-// Sets default values for this component's properties
+
 UAttributeComponent::UAttributeComponent()
 {
 	HealthMax = 100;
@@ -14,13 +14,13 @@ UAttributeComponent::UAttributeComponent()
 }
 
 
-bool UAttributeComponent::ApplyHealthChange(float Delta)
+bool UAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	float OldHealth = Health;
 	Health = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
 	
 	float ActualDelta = Health - OldHealth;
-	OnHealthChanged.Broadcast(nullptr, this, Health, ActualDelta);
+	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
 	
 	return ActualDelta != 0;
 }
@@ -37,6 +37,16 @@ bool UAttributeComponent::MinusLife()
 	OnLifeChanged.Broadcast(nullptr, this);
 	
 	return true;
+}
+
+bool UAttributeComponent::SetLife(int32 NewLife)
+{
+	if (0 <= NewLife && NewLife <= LifeMax)
+	{
+		Life = NewLife;
+		return true;
+	}
+	return false;
 }
 
 float UAttributeComponent::GetHealth() const
@@ -56,8 +66,7 @@ bool UAttributeComponent::IsFullHealth() const
 
 bool UAttributeComponent::IsAlive() const
 {
-	// return Health > 0.0f;
-	return Life >= 0;
+	return Life > 0;
 }
 
 float UAttributeComponent::GetLife() const
@@ -68,4 +77,23 @@ float UAttributeComponent::GetLife() const
 float UAttributeComponent::GetLifeMax() const
 {
 	return LifeMax;
+}
+
+UAttributeComponent* UAttributeComponent::GetAttributeComp(AActor* FromActor)
+{
+	if (FromActor)
+	{
+		return Cast<UAttributeComponent>(FromActor->GetComponentByClass(UAttributeComponent::StaticClass()));
+	}
+	return nullptr;
+}
+
+bool UAttributeComponent::IsActorAlive(AActor* Actor)
+{
+	UAttributeComponent* AttributeComp = GetAttributeComp(Actor);
+	if (AttributeComp)
+	{
+		return AttributeComp->IsAlive();
+	}
+	return false;
 }
