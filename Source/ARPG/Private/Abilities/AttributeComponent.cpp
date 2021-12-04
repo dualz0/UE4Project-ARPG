@@ -16,20 +16,13 @@ UAttributeComponent::UAttributeComponent()
 
 bool UAttributeComponent::ApplyHealthChange(float Delta)
 {
-	Health += Delta;
-	if (Health < 0)
-	{
-		Health = 0;
-		MinusLife();
-	}
-	else if (Health > HealthMax)
-	{
-		Health = HealthMax;
-	}
-
-	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
+	float OldHealth = Health;
+	Health = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
 	
-	return true;
+	float ActualDelta = Health - OldHealth;
+	OnHealthChanged.Broadcast(nullptr, this, Health, ActualDelta);
+	
+	return ActualDelta != 0;
 }
 
 bool UAttributeComponent::MinusLife()

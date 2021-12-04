@@ -16,7 +16,7 @@ class ARPG_API UBTTaskNode_RangedAttack : public UBTTaskNode
 	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
     
-   protected:
+    protected:
     
     	UPROPERTY(EditAnywhere, Category = "AI")
     	TSubclassOf<AActor> ProjectileClass;
