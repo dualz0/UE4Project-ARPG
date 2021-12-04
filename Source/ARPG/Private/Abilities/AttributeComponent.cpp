@@ -21,21 +21,24 @@ bool UAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta
 	
 	float ActualDelta = Health - OldHealth;
 	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+
+	if (Health == 0)
+	{
+		ApplyLifeChange(InstigatorActor, -1);
+	}
 	
 	return ActualDelta != 0;
 }
 
-bool UAttributeComponent::MinusLife()
+bool UAttributeComponent::ApplyLifeChange(AActor* InstigatorActor, float Delta)
 {
-	if (Life < 0)
+	if (Life <= 0)
 	{
 		return false;
 	}
-
 	Life--;
-	Health = HealthMax;
-	OnLifeChanged.Broadcast(nullptr, this);
-	
+	OnLifeChanged.Broadcast(InstigatorActor, this);
+
 	return true;
 }
 
@@ -96,4 +99,14 @@ bool UAttributeComponent::IsActorAlive(AActor* Actor)
 		return AttributeComp->IsAlive();
 	}
 	return false;
+}
+
+bool UAttributeComponent::IsPlayer() const
+{
+	return bIsPlayer;
+}
+
+void UAttributeComponent::SetIsPlayer(bool IsPlayer)
+{
+	bIsPlayer = IsPlayer;
 }

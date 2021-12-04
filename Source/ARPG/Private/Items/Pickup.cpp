@@ -25,7 +25,7 @@ void APickup::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	if (OtherActor)
 	{
 		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
-		if (AttributeComp && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
+		if (AttributeComp && AttributeComp->IsPlayer() && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
 		{
 			AttributeComp->ApplyHealthChange(this, HealValue);
 			HideAndCooldownPowerup();

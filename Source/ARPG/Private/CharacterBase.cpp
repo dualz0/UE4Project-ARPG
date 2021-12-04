@@ -21,6 +21,7 @@ ACharacterBase::ACharacterBase()
     CameraComp->SetupAttachment(SpringArmComp);
 	
 	AttributeComp = CreateDefaultSubobject<UAttributeComponent>("AttributeComp");
+	AttributeComp->SetIsPlayer(true);
 	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
@@ -175,14 +176,15 @@ void ACharacterBase::OnHealthChanged(AActor* InstigatorActor, UAttributeComponen
 
 void ACharacterBase::OnLifeChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp)
 {
-	// GameOver
-	if (AttributeComp->GetLife() <= 0)
+	if (AttributeComp->IsAlive())
 	{
-		APlayerController* PC = Cast<APlayerController>(GetController());
-		DisableInput(PC);
+		// reborn
+		AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax());
 	}
 	else
 	{
-		// Reborn
+		// GameOver
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		DisableInput(PC);
 	}
 } 

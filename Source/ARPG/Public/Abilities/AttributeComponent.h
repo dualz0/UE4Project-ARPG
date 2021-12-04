@@ -38,8 +38,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float LifeMax;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	bool bIsPlayer;
+	
 public:	
 
+	UFUNCTION(BlueprintCallable)
+	bool IsPlayer() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsPlayer(bool IsPlayer);
+	
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
 	
@@ -51,9 +60,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool MinusLife();
+	bool ApplyLifeChange(AActor* InstigatorActor, float Delta);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool SetLife(int32 NewLife);
@@ -72,5 +81,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetLifeMax() const;
-
 };
