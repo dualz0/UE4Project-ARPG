@@ -4,14 +4,50 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "EnvironmentQuery/EnvQueryTypes.h"
 #include "MyGameModeBase.generated.h"
 
-/**
- * 
- */
+
+class UEnvQuery;
+class UEnvQueryInstanceBlueprintWrapper;
+class UCurveFloat;
+
 UCLASS()
 class ARPG_API AMyGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
 	
+protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	TSubclassOf<AActor> MinionClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UEnvQuery* SpawnBotQuery;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UCurveFloat* DifficultyCurve;
+
+	FTimerHandle TimerHandle_SpawnBots;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	float SpawnTimerInterval;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	int32 MaxBotCount;
+
+	UFUNCTION()
+	void SpawnBotTimerElapsed();
+
+	UFUNCTION()
+	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	int32 GetAliveBotsNum();
+	
+public:
+
+	AMyGameModeBase();
+
+	virtual void StartPlay() override;
 };
