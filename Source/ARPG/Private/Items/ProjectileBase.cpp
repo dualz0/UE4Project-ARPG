@@ -43,5 +43,5 @@ void AProjectileBase::Explode_Implementation()
 void AProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	// SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 }

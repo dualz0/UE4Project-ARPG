@@ -39,9 +39,6 @@ protected:
 	FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_BlackholeAttack;
 	FTimerHandle TimerHandle_DashAttack;
-	
-	// TODO: Test
-	FTimerHandle TestTimerHandle;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	float AttackAnimDelay;
@@ -61,10 +58,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UAttributeComponent* AttributeComp;
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	
+
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 

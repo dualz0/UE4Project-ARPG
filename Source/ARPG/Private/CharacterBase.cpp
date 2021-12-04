@@ -30,16 +30,6 @@ ACharacterBase::ACharacterBase()
 	HandSocketName = "Muzzle_01";
 }
 
-// Called when the game starts or when spawned
-void ACharacterBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// TODO: Test Attacked
-	GetWorldTimerManager().SetTimer(TestTimerHandle, this, &ACharacterBase::TestAttacked, 2.0f, true, 5.0f);
-
-}
-
 void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -176,7 +166,7 @@ void ACharacterBase::OnHealthChanged(AActor* InstigatorActor, UAttributeComponen
 {
 	if (Delta < 0.0f)
 	{
-		GetMesh()->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
+		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 	}
 }
 
