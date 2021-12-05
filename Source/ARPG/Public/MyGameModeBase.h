@@ -3,14 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Abilities/AttributeComponent.h"
 #include "GameFramework/GameModeBase.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "MyGameModeBase.generated.h"
 
-
+class ACharacterBase;
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
+
 
 UCLASS()
 class ARPG_API AMyGameModeBase : public AGameModeBase
@@ -30,6 +32,7 @@ protected:
 	UCurveFloat* DifficultyCurve;
 
 	FTimerHandle TimerHandle_SpawnBots;
+	FTimerHandle TimerHandle_RespawnDelay;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float SpawnTimerInterval;
@@ -43,11 +46,17 @@ protected:
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
+	UFUNCTION()
 	int32 GetAliveBotsNum();
+
+	UFUNCTION()
+	void RespawnPlayerElapsed(ACharacterBase* Player, AController* Controller, UAttributeComponent* Attributes);
 	
 public:
 
 	AMyGameModeBase();
 
 	virtual void StartPlay() override;
+	
+	virtual void OnActorKilled(AActor* VictimActor, UAttributeComponent* VictimAttributes, AActor* Killer);
 };

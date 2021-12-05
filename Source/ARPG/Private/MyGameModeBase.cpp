@@ -8,7 +8,7 @@
 #include "AI/AICharacter.h"
 #include "Abilities/AttributeComponent.h"
 #include "EngineUtils.h"
-
+#include "CharacterBase.h"
 
 
 
@@ -87,4 +87,48 @@ int32 AMyGameModeBase::GetAliveBotsNum()
 		}
 	}
 	return AliveBotsNum;
+}
+
+void AMyGameModeBase::RespawnPlayerElapsed(ACharacterBase* Player, AController* Controller, UAttributeComponent* Attributes)
+{
+	if (ensure(Controller))
+	{
+		// Controller->UnPossess();
+		// RestartPlayer(Controller);
+
+		Player->EnableInput(Cast<APlayerController>(Controller));
+
+		Attributes->SetHealthFull();
+	}
+}
+
+
+void AMyGameModeBase::OnActorKilled(AActor* VictimActor, UAttributeComponent* VictimAttributes, AActor* Killer)
+{
+	ACharacterBase* Player = Cast<ACharacterBase>(VictimActor);
+	if (Player)
+	{
+		Player->DisableInput(Cast<APlayerController>(Player->GetController()));
+
+		if (VictimAttributes->GetLife() > 0)
+		{
+			UE_LOG(LogTemp, Log, TEXT("重生"));
+			
+			FTimerDelegate Delegate;
+			Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player, Player->GetController(), VictimAttributes);
+
+			float RespawnDelay = 5.0f;
+			GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+		}
+		else
+		{
+			// TODO: 积分结算等处理
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+		// TODO: AI角色死亡处理
+		
+	}
 }

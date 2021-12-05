@@ -182,19 +182,21 @@ void ACharacterBase::OnHealthChanged(AActor* InstigatorActor, UAttributeComponen
 
 void ACharacterBase::OnLifeChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp)
 {
-	if (AttributeComp->IsAlive())
+	// APlayerController* PC = Cast<APlayerController>(GetController());
+	// DisableInput(PC);
+	
+	if (AttributeComp->GetLife() > 0)
 	{
 		// reborn
-		AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax());
+		// AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax());
 
-		ActiveHealthBar = CreateWidget<UHealthUserWidget>(GetWorld(), HealthBarWidgetClass);
-		ActiveHealthBar->AttachedActor = this;
-		ActiveHealthBar->AddToViewport();
+		// ActiveHealthBar = CreateWidget<UHealthUserWidget>(GetWorld(), HealthBarWidgetClass);
+		// ActiveHealthBar->AttachedActor = this;
+		// ActiveHealthBar->AddToViewport();
 	}
 	else
 	{
 		// GameOver
-		APlayerController* PC = Cast<APlayerController>(GetController());
-		DisableInput(PC);
+		
 	}
 } 

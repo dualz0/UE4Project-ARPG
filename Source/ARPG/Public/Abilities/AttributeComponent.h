@@ -74,6 +74,9 @@ public:
 	float GetHealthMax() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	void SetHealthFull();
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool IsFullHealth() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
