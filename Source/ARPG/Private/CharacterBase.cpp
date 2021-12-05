@@ -7,8 +7,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "HealthUserWidget.h"
 
-// Sets default values
+
+
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -37,6 +39,10 @@ void ACharacterBase::PostInitializeComponents()
 
 	AttributeComp->OnHealthChanged.AddDynamic(this, &ACharacterBase::OnHealthChanged);
 	AttributeComp->OnLifeChanged.AddDynamic(this, &ACharacterBase::OnLifeChanged);
+
+	ActiveHealthBar = CreateWidget<UHealthUserWidget>(GetWorld(), HealthBarWidgetClass);
+	ActiveHealthBar->AttachedActor = this;
+	ActiveHealthBar->AddToViewport();
 }
 
 void ACharacterBase::MoveForward(float Value)
@@ -180,6 +186,10 @@ void ACharacterBase::OnLifeChanged(AActor* InstigatorActor, UAttributeComponent*
 	{
 		// reborn
 		AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax());
+
+		ActiveHealthBar = CreateWidget<UHealthUserWidget>(GetWorld(), HealthBarWidgetClass);
+		ActiveHealthBar->AttachedActor = this;
+		ActiveHealthBar->AddToViewport();
 	}
 	else
 	{

@@ -12,6 +12,8 @@ class UAnimMontage;
 class UCameraComponent;
 class UParticleSystem;
 class USpringArmComponent;
+class UHealthUserWidget;
+class UUserWidget;
 
 UCLASS()
 class ARPG_API ACharacterBase : public ACharacter
@@ -61,6 +63,11 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UAttributeComponent* AttributeComp;
+
+	UHealthUserWidget* ActiveHealthBar;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 	
 	void MoveForward(float Value);
 	
