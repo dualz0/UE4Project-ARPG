@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Blueprint/UserWidget.h"
 #include "AICharacter.generated.h"
 
-class UPawnSensingComponent;
 class UAttributeComponent;
+class UPawnSensingComponent;
+class UUserWidget;
+class UHealthUserWidget;
 
 UCLASS()
 class ARPG_API AAICharacter : public ACharacter
@@ -34,6 +37,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UAttributeComponent* AttributeComp;
 	
+	UHealthUserWidget* ActiveHealthBar;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
+
+
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 

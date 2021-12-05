@@ -7,11 +7,11 @@
 #include "Abilities/AttributeComponent.h"
 #include "CharacterBase.generated.h"
 
-class UCameraComponent;
-class USpringArmComponent;
-class UAnimMontage;
 class AttributeComponent;
+class UAnimMontage;
+class UCameraComponent;
 class UParticleSystem;
+class USpringArmComponent;
 
 UCLASS()
 class ARPG_API ACharacterBase : public ACharacter
