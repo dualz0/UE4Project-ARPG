@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Abilities/AttributeComponent.h"
 #include "CharacterBase.generated.h"
 
-class AttributeComponent;
+class UAttributeComponent;
 class UAnimMontage;
 class UCameraComponent;
 class UParticleSystem;
 class USpringArmComponent;
 class UHealthUserWidget;
 class UUserWidget;
+class UAbilityComponent;
 
 UCLASS()
 class ARPG_API ACharacterBase : public ACharacter
@@ -23,31 +23,6 @@ class ARPG_API ACharacterBase : public ACharacter
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;
-
-	UPROPERTY(VisibleAnywhere, Category = "Effects")
-	FName HandSocketName;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> ProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> BlackHoleProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> DashProjectileClass;
-	
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UAnimMontage* AttackAnim;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UParticleSystem* AttackEffect;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	float AttackAnimDelay;
-
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_BlackholeAttack;
-	FTimerHandle TimerHandle_DashAttack;
 	
 	FTimerHandle TimerHandle_Reborn;
 	
@@ -63,6 +38,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UAttributeComponent* AttributeComp;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UAbilityComponent* AbilityComp;
 
 	UHealthUserWidget* ActiveHealthBar;
 
@@ -75,19 +53,13 @@ protected:
 
 	void PrimaryAttack();
 	
-	void PrimaryAttack_TimeElapsed();
-	
 	void BlackHoleAttack();
-
-	void BlackholeAttack_TimeElapsed();
 
 	void Dash();
 
-	void Dash_TimeElapsed();
+	void SprintStart();
 
-	void StartAttackEffects();
-	
-	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
+	void SprintStop();
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp, float NewHealth, float Delta);
