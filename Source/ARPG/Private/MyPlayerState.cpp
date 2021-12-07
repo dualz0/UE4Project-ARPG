@@ -13,11 +13,6 @@ void AMyPlayerState::AddCredits(int32 Delta)
 	Credits += Delta;
 
 	OnCreditsChanged.Broadcast(this, Credits, Delta);
-
-	if (GEngine)
-    {
-    	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Credis: %d"), Credits));
-    }
 }
 
 
@@ -39,3 +34,8 @@ bool AMyPlayerState::RemoveCredits(int32 Delta)
 
 	return true;
 }
+
+int32 AMyPlayerState::GetCredits() const
+{
+	return Credits;
+} 

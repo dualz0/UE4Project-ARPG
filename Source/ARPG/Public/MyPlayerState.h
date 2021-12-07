@@ -18,14 +18,18 @@ class ARPG_API AMyPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 protected:
+    UPROPERTY(EditDefaultsOnly, Category = "Credits")
 	int32 Credits;
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerState|Credits") // < Category|SubCategory
+	UFUNCTION(BlueprintCallable, Category = "Credits")
+	int32 GetCredits() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Credits")
 	void AddCredits(int32 Delta);
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerState|Credits")
+	UFUNCTION(BlueprintCallable, Category = "Credits")
 	bool RemoveCredits(int32 Delta);
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")

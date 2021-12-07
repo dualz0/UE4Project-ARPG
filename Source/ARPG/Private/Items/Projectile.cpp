@@ -4,7 +4,8 @@
 #include "Abilities/AttributeComponent.h"
 #include "Components/SphereComponent.h"
 
-// Sets default values
+
+
 AProjectile::AProjectile()
 {
 	SphereComp->SetSphereRadius(20.0f);

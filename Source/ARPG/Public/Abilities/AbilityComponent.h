@@ -19,7 +19,10 @@ public:
 	FGameplayTagContainer ActiveGameplayTags;
 
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void AddAbility(TSubclassOf<UAbility> AbilityClass);
+	void AddAbility(AActor* Instigator, TSubclassOf<UAbility> AbilityClass);
+
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void RemoveAbility(UAbility* AbilityToRemove);
 
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool StartAbilityByName(AActor* Instigator, FName AbilityName);
@@ -32,6 +35,9 @@ public:
 
 protected:
 
+	UFUNCTION(Server, Reliable)
+	void ServerStartAbility(AActor* Instigator, FName AbilityName);
+	
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UAbility>> DefaultAbilities;
 

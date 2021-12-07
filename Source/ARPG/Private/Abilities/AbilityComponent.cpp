@@ -7,8 +7,14 @@
 UAbilityComponent::UAbilityComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	SetIsReplicatedByDefault(true);
 }
 
+void UAbilityComponent::ServerStartAbility_Implementation(AActor* Instigator, FName AbilityName)
+{
+	StartAbilityByName(Instigator, AbilityName);
+}
 
 void UAbilityComponent::BeginPlay()
 {
@@ -16,7 +22,7 @@ void UAbilityComponent::BeginPlay()
 
 	for (TSubclassOf<UAbility> AbilityClass : DefaultAbilities)
 	{
-		AddAbility(AbilityClass);
+		AddAbility(GetOwner(), AbilityClass);
 	}
 }
 
@@ -29,7 +35,7 @@ void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMsg);
 }
 
-void UAbilityComponent::AddAbility(TSubclassOf<UAbility> AbilityClass)
+void UAbilityComponent::AddAbility(AActor* Instigator, TSubclassOf<UAbility> AbilityClass)
 {
 	if (!ensure(AbilityClass))
 	{
@@ -40,9 +46,23 @@ void UAbilityComponent::AddAbility(TSubclassOf<UAbility> AbilityClass)
 	if (ensure(NewAbility))
 	{
 		Abilities.Add(NewAbility);
+		
+		if (NewAbility->bAutoStart && ensure(NewAbility->CanStart(Instigator)))
+		{
+			NewAbility->StartAbility(Instigator);
+		}
 	}
 }
 
+void UAbilityComponent::RemoveAbility(UAbility* AbilityToRemove)
+{
+	if (!ensure(AbilityToRemove && !AbilityToRemove->IsRunning()))
+	{
+		return;
+	}
+
+	Abilities.Remove(AbilityToRemove);
+}
 
 bool UAbilityComponent::StartAbilityByName(AActor* Instigator, FName AbilityName)
 {
@@ -55,6 +75,12 @@ bool UAbilityComponent::StartAbilityByName(AActor* Instigator, FName AbilityName
 				FString FailedMsg = FString::Printf(TEXT("Failed to run: %s"), *AbilityName.ToString());
 				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailedMsg);
 				continue;
+			}
+
+			// Is Client?
+			if (!GetOwner()->HasAuthority())
+			{
+				ServerStartAbility(Instigator, AbilityName);
 			}
 			
 			Ability->StartAbility(Instigator);

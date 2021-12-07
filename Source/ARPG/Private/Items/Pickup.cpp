@@ -18,19 +18,23 @@ APickup::APickup()
 
 	RespawnTime = 10.0f;
 	HealValue = 50.0f;
+
+	SetReplicates(true);
 }
 
 void APickup::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor)
-	{
-		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
-		if (AttributeComp && AttributeComp->IsPlayer() && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
-		{
-			AttributeComp->ApplyHealthChange(this, HealValue);
-			HideAndCooldownPowerup();
-		}
-	}
+
+	ServerInteract(OtherActor);
+	// if (OtherActor)
+	// {
+	// 	UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
+	// 	if (AttributeComp && AttributeComp->IsPlayer() && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
+	// 	{
+	// 		AttributeComp->ApplyHealthChange(this, HealValue);
+	// 		HideAndCooldownPowerup();
+	// 	}
+	// }
 }
 
 void APickup::ShowPowerup()
@@ -51,4 +55,17 @@ void APickup::SetPowerupState(bool bNewIsActive)
 	SetActorEnableCollision(bNewIsActive);
 	
 	RootComponent->SetVisibility(bNewIsActive, true);
+}
+
+void APickup::ServerInteract_Implementation(AActor* OtherActor)
+{
+	if (OtherActor)
+	{
+		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
+		if (AttributeComp && AttributeComp->IsPlayer() && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
+		{
+			AttributeComp->ApplyHealthChange(this, HealValue);
+			HideAndCooldownPowerup();
+		}
+	}	
 }

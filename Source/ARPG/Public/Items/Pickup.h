@@ -15,6 +15,8 @@ class ARPG_API APickup : public AActor
 	GENERATED_BODY()
 	
 protected:
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
 
 	UPROPERTY(EditAnywhere, Category = "Pickup")
 	float RespawnTime;
@@ -31,6 +33,9 @@ protected:
 
 	void SetPowerupState(bool bNewIsActive);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiActorBeginOverlap(AActor* InstigatorActor, float NewHealth, float Delta);
+	
 	UFUNCTION()
 	void OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	

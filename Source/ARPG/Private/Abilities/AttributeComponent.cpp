@@ -3,7 +3,7 @@
 
 #include "Abilities/AttributeComponent.h"
 #include "MyGameModeBase.h"
-
+#include "Net/UnrealNetwork.h"
 
 UAttributeComponent::UAttributeComponent()
 {
@@ -12,6 +12,8 @@ UAttributeComponent::UAttributeComponent()
 	
 	LifeMax = 3;
 	Life = LifeMax;
+
+	SetIsReplicatedByDefault(true);
 }
 
 
@@ -21,8 +23,13 @@ bool UAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta
 	Health = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
 	
 	float ActualDelta = Health - OldHealth;
-	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+	// OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
 
+	if (ActualDelta != 0.0f)
+	{
+		MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
+	}
+	
 	if (Health == 0 && Life > 0)
 	{
 		ApplyLifeChange(InstigatorActor, -1);
@@ -44,7 +51,8 @@ bool UAttributeComponent::ApplyLifeChange(AActor* InstigatorActor, float Delta)
 		return false;
 	}
 	Life--;
-	OnLifeChanged.Broadcast(InstigatorActor, this);
+	// OnLifeChanged.Broadcast(InstigatorActor, this);
+	MulticastLifeChanged_Implementation(InstigatorActor, Delta);
 
 	AMyGameModeBase* GM = GetWorld()->GetAuthGameMode<AMyGameModeBase>();
 	if (GM)
@@ -120,6 +128,16 @@ bool UAttributeComponent::IsActorAlive(AActor* Actor)
 	return false;
 }
 
+void UAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
+}
+
+void UAttributeComponent::MulticastLifeChanged_Implementation(AActor* InstigatorActor, float Delta)
+{
+	OnLifeChanged.Broadcast(InstigatorActor, this);
+}
+
 bool UAttributeComponent::IsPlayer() const
 {
 	return bIsPlayer;
@@ -128,4 +146,14 @@ bool UAttributeComponent::IsPlayer() const
 void UAttributeComponent::SetIsPlayer(bool IsPlayer)
 {
 	bIsPlayer = IsPlayer;
+}
+
+
+void UAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UAttributeComponent, Health);
+	DOREPLIFETIME(UAttributeComponent, HealthMax);
+	//DOREPLIFETIME_CONDITION(UAttributeComponent, HealthMax, COND_InitialOnly);
 }
