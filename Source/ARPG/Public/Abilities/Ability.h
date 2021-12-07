@@ -31,6 +31,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer BlockedTags;
 
+	// is ability running
 	bool bIsRunning;
 	
 public:

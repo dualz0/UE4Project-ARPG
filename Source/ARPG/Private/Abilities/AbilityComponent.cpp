@@ -24,7 +24,9 @@ void UAbilityComponent::BeginPlay()
 void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
+
+	FString DebugMsg = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMsg);
 }
 
 void UAbilityComponent::AddAbility(TSubclassOf<UAbility> AbilityClass)
@@ -48,6 +50,13 @@ bool UAbilityComponent::StartAbilityByName(AActor* Instigator, FName AbilityName
 	{
 		if (Ability && Ability->AbilityName == AbilityName)
 		{
+			if (!Ability->CanStart(Instigator))
+			{
+				FString FailedMsg = FString::Printf(TEXT("Failed to run: %s"), *AbilityName.ToString());
+				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailedMsg);
+				continue;
+			}
+			
 			Ability->StartAbility(Instigator);
 			return true;
 		}
@@ -63,8 +72,11 @@ bool UAbilityComponent::StopAbilityByName(AActor* Instigator, FName AbilityName)
 	{
 		if (Ability && Ability->AbilityName == AbilityName)
 		{
-			Ability->StopAbility(Instigator);
-			return true;
+			if (Ability->IsRunning())
+			{
+				Ability->StopAbility(Instigator);
+				return true;
+			}
 		}
 	}
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameplayTagContainer.h"
 #include "AbilityComponent.generated.h"
 
 class UAbility;
@@ -13,7 +14,9 @@ class ARPG_API UAbilityComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tags")
+	FGameplayTagContainer ActiveGameplayTags;
 
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void AddAbility(TSubclassOf<UAbility> AbilityClass);
