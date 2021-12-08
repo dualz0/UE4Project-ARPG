@@ -24,7 +24,6 @@ ACharacterBase::ACharacterBase()
     CameraComp->SetupAttachment(SpringArmComp);
 	
 	AttributeComp = CreateDefaultSubobject<UAttributeComponent>("AttributeComp");
-	AttributeComp->SetIsPlayer(true);
 	
 	AbilityComp = CreateDefaultSubobject<UAbilityComponent>("AbilityComp");
 	

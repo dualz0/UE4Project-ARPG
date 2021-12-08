@@ -155,5 +155,4 @@ void UAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 	DOREPLIFETIME(UAttributeComponent, Health);
 	DOREPLIFETIME(UAttributeComponent, HealthMax);
-	//DOREPLIFETIME_CONDITION(UAttributeComponent, HealthMax, COND_InitialOnly);
 }

@@ -4,6 +4,8 @@
 #include "Items/Pickup.h"
 #include "Abilities/AttributeComponent.h"
 #include "Components/SphereComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "CharacterBase.h"
 
 APickup::APickup()
 {
@@ -18,23 +20,34 @@ APickup::APickup()
 
 	RespawnTime = 10.0f;
 	HealValue = 50.0f;
-
+	bIsActive = true;
+	
 	SetReplicates(true);
 }
 
 void APickup::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	// ServerInteract(OtherActor);
+	if (OtherActor)
+	{
+		ACharacterBase* Player = Cast<ACharacterBase>(OtherActor);
 
-	ServerInteract(OtherActor);
-	// if (OtherActor)
-	// {
-	// 	UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
-	// 	if (AttributeComp && AttributeComp->IsPlayer() && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
-	// 	{
-	// 		AttributeComp->ApplyHealthChange(this, HealValue);
-	// 		HideAndCooldownPowerup();
-	// 	}
-	// }
+		if (Player)
+		{
+			UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
+			if (AttributeComp && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
+			{
+				AttributeComp->ApplyHealthChange(this, HealValue);
+				HideAndCooldownPowerup();
+			}
+		}
+	}
+}
+
+void APickup::OnRep_IsActive()
+{
+	SetActorEnableCollision(bIsActive);
+	RootComponent->SetVisibility(bIsActive, true);
 }
 
 void APickup::ShowPowerup()
@@ -52,9 +65,8 @@ void APickup::HideAndCooldownPowerup()
 
 void APickup::SetPowerupState(bool bNewIsActive)
 {
-	SetActorEnableCollision(bNewIsActive);
-	
-	RootComponent->SetVisibility(bNewIsActive, true);
+	bIsActive = bNewIsActive;
+	OnRep_IsActive();
 }
 
 void APickup::ServerInteract_Implementation(AActor* OtherActor)
@@ -64,8 +76,20 @@ void APickup::ServerInteract_Implementation(AActor* OtherActor)
 		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
 		if (AttributeComp && AttributeComp->IsPlayer() && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
 		{
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("ServerInteract_Implementation: Overlap")));
+			}
+			
 			AttributeComp->ApplyHealthChange(this, HealValue);
 			HideAndCooldownPowerup();
 		}
 	}	
 }
+
+void APickup::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickup, bIsActive);
+} 

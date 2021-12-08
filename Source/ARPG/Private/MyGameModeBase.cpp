@@ -185,8 +185,6 @@ void AMyGameModeBase::OnActorKilled(AActor* VictimActor, UAttributeComponent* Vi
 
 		if (VictimAttributes->GetLife() > 0)
 		{
-			UE_LOG(LogTemp, Log, TEXT("重生"));
-			
 			FTimerDelegate Delegate;
 			Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player, Player->GetController(), VictimAttributes);
 

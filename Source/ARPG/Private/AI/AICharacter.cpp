@@ -14,7 +14,6 @@ AAICharacter::AAICharacter()
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
     
     AttributeComp = CreateDefaultSubobject<UAttributeComponent>("AttributeComp");
-	AttributeComp->SetIsPlayer(false);
 	AttributeComp->SetLife(1);
 	
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
