@@ -3,12 +3,19 @@
 
 #include "Abilities/AbilityComponent.h"
 #include "Abilities/Ability.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/ActorChannel.h"
 
 UAbilityComponent::UAbilityComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	SetIsReplicatedByDefault(true);
+}
+
+void UAbilityComponent::ServerStopAbility_Implementation(AActor* Instigator, FName AbilityName)
+{
+	StopAbilityByName(Instigator, AbilityName);
 }
 
 void UAbilityComponent::ServerStartAbility_Implementation(AActor* Instigator, FName AbilityName)
@@ -20,19 +27,33 @@ void UAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (TSubclassOf<UAbility> AbilityClass : DefaultAbilities)
+	if (GetOwner()->HasAuthority())
 	{
-		AddAbility(GetOwner(), AbilityClass);
+		for (TSubclassOf<UAbility> AbilityClass : DefaultAbilities)
+		{
+			AddAbility(GetOwner(), AbilityClass);
+		}
 	}
+}
+
+bool UAbilityComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	for (UAbility* Ability : Abilities)
+	{
+		if (Ability)
+		{
+			WroteSomething |= Channel->ReplicateSubobject(Ability, *Bunch, *RepFlags);
+		}
+	}
+
+	return WroteSomething;
 }
 
 
 void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	FString DebugMsg = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMsg);
 }
 
 void UAbilityComponent::AddAbility(AActor* Instigator, TSubclassOf<UAbility> AbilityClass)
@@ -42,9 +63,18 @@ void UAbilityComponent::AddAbility(AActor* Instigator, TSubclassOf<UAbility> Abi
 		return;
 	}
 
-	UAbility* NewAbility = NewObject<UAbility>(this, AbilityClass);
+	// Skip for clients
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client attempting to AddAction. [Class: %s]"), *GetNameSafe(AbilityClass));
+		return;
+	}
+
+	UAbility* NewAbility = NewObject<UAbility>(GetOwner(), AbilityClass);
 	if (ensure(NewAbility))
 	{
+		NewAbility->Initialize(this);
+		
 		Abilities.Add(NewAbility);
 		
 		if (NewAbility->bAutoStart && ensure(NewAbility->CanStart(Instigator)))
@@ -100,6 +130,12 @@ bool UAbilityComponent::StopAbilityByName(AActor* Instigator, FName AbilityName)
 		{
 			if (Ability->IsRunning())
 			{
+				// Is Client?
+				if (!GetOwner()->HasAuthority())
+				{
+					ServerStopAbility(Instigator, AbilityName);
+				}
+
 				Ability->StopAbility(Instigator);
 				return true;
 			}
@@ -108,3 +144,10 @@ bool UAbilityComponent::StopAbilityByName(AActor* Instigator, FName AbilityName)
 
 	return false;
 }
+
+void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UAbilityComponent, Abilities);
+} 

@@ -20,24 +20,29 @@ UAttributeComponent::UAttributeComponent()
 bool UAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	float OldHealth = Health;
-	Health = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
+	float NewHealth = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
 	
 	float ActualDelta = Health - OldHealth;
 	// OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
 
-	if (ActualDelta != 0.0f)
+	if (GetOwner()->HasAuthority())
 	{
-		MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
-	}
-	
-	if (Health == 0 && Life > 0)
-	{
-		ApplyLifeChange(InstigatorActor, -1);
+		Health = NewHealth;
 
-		AMyGameModeBase* GM = GetWorld()->GetAuthGameMode<AMyGameModeBase>();
-		if (GM)
+		if (ActualDelta != 0.0f)
 		{
-			GM->OnActorKilled(GetOwner(), this, InstigatorActor);
+			MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
+		}
+		
+		if (Health == 0 && Life > 0)
+		{
+			ApplyLifeChange(InstigatorActor, -1);
+
+			AMyGameModeBase* GM = GetWorld()->GetAuthGameMode<AMyGameModeBase>();
+			if (GM)
+			{
+				GM->OnActorKilled(GetOwner(), this, InstigatorActor);
+			}
 		}
 	}
 	

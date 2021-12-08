@@ -3,7 +3,7 @@
 
 #include "Abilities/Ability.h"
 #include "Abilities/AbilityComponent.h"
-
+#include "Net/UnrealNetwork.h"
 
 
 bool UAbility::CanStart_Implementation(AActor* Instigator)
@@ -30,28 +30,28 @@ void UAbility::StartAbility_Implementation(AActor* Instigator)
 	UAbilityComponent* Comp = GetOwningComponent();	
 	Comp->ActiveGameplayTags.AppendTags(GrantsTags);
 
-	bIsRunning = true;
+	RepData.bIsRunning = true;
+	RepData.Instigator = Instigator;
 }
 
 
 void UAbility::StopAbility_Implementation(AActor* Instigator)
 {
 	UE_LOG(LogTemp, Log, TEXT("Stopped: %s"), *GetNameSafe(this));
-	
-	ensureAlways(bIsRunning);
 
 	UAbilityComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.RemoveTags(GrantsTags);
 
-	bIsRunning = false;
+	RepData.bIsRunning = false;
+	RepData.Instigator = Instigator;
 }
 
 UWorld* UAbility::GetWorld() const
 {
-	UActorComponent* Comp = Cast<UActorComponent>(GetOuter());
-	if (Comp)
+	AActor* Actor = Cast<AActor>(GetOuter());
+	if (Actor)
 	{
-		return Comp->GetWorld();
+		return Actor->GetWorld();
 	}
 
 	return nullptr;
@@ -59,10 +59,37 @@ UWorld* UAbility::GetWorld() const
 
 UAbilityComponent* UAbility::GetOwningComponent() const
 {
-	return Cast<UAbilityComponent>(GetOuter());
+	// return Cast<UAbilityComponent>(GetOuter());
+
+	return AbilityComp;
 }
 
 bool UAbility::IsRunning() const
 {
-	return bIsRunning;
+	return RepData.bIsRunning;
 }
+
+void UAbility::OnRep_RepData()
+{
+	if (RepData.bIsRunning)
+	{
+		StartAbility(RepData.Instigator);
+	}
+	else
+	{
+		StopAbility(RepData.Instigator);
+	}
+}
+
+void UAbility::Initialize(UAbilityComponent* NewAbilityComp)
+{
+	AbilityComp = NewAbilityComp;
+}
+
+void UAbility::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UAbility, RepData);
+	DOREPLIFETIME(UAbility, AbilityComp);
+} 

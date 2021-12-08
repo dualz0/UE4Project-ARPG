@@ -38,15 +38,19 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerStartAbility(AActor* Instigator, FName AbilityName);
 	
+	UFUNCTION(Server, Reliable)
+	void ServerStopAbility(AActor* Instigator, FName AbilityName);
+	
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UAbility>> DefaultAbilities;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<UAbility*> Abilities;
 	
 	virtual void BeginPlay() override;
 
 public:
+	bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
