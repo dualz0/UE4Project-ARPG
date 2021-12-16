@@ -91,7 +91,6 @@ void ACharacterBase::SprintStop()
 
 }
 
-// Called to bind functionality to input
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -129,13 +128,22 @@ void ACharacterBase::OnLifeChanged(AActor* InstigatorActor, UAttributeComponent*
 		// reborn
 		// AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax());
 
-		// ActiveHealthBar = CreateWidget<UHealthUserWidget>(GetWorld(), HealthBarWidgetClass);
-		// ActiveHealthBar->AttachedActor = this;
-		// ActiveHealthBar->AddToViewport();
+
 	}
 	else
 	{
 		// GameOver
 		
 	}
+}
+
+void ACharacterBase::Respawn()
+{
+	// APlayerController* PC = Cast<APlayerController>(GetController());
+	// EnableInput(PC);
+
+	ActiveHealthBar = CreateWidget<UHealthUserWidget>(GetWorld(), HealthBarWidgetClass);
+	ActiveHealthBar->AttachedActor = this;
+	ActiveHealthBar->AddToViewport();
+
 } 

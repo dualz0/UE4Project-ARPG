@@ -167,6 +167,8 @@ void AMyGameModeBase::RespawnPlayerElapsed(ACharacterBase* Player, AController* 
 		// RestartPlayer(Controller);
 
 		Player->EnableInput(Cast<APlayerController>(Controller));
+		
+		Player->Respawn();
 
 		Attributes->SetHealthFull();
 	}

@@ -13,7 +13,7 @@ class ARPG_API AProjectile : public AProjectileBase
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
 	float DamageAmount;
 	
 	UFUNCTION()

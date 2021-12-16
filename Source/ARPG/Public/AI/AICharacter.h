@@ -20,6 +20,7 @@ class ARPG_API AAICharacter : public ACharacter
 public:
 	AAICharacter();
 
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;

@@ -16,14 +16,14 @@ UAttributeComponent::UAttributeComponent()
 	SetIsReplicatedByDefault(true);
 }
 
-
 bool UAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	float OldHealth = Health;
 	float NewHealth = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
 	
-	float ActualDelta = Health - OldHealth;
-	// OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+	float ActualDelta = NewHealth - OldHealth;
+	
+	Health = NewHealth;
 
 	if (GetOwner()->HasAuthority())
 	{
@@ -88,11 +88,6 @@ float UAttributeComponent::GetHealthMax() const
 	return HealthMax;
 }
 
-void UAttributeComponent::SetHealthFull()
-{
-	Health = HealthMax;
-}
-
 bool UAttributeComponent::IsFullHealth() const
 {
 	return Health == HealthMax;
@@ -113,6 +108,22 @@ float UAttributeComponent::GetLifeMax() const
 {
 	return LifeMax;
 }
+
+bool UAttributeComponent::SetMaxHealth(float NewMaxHealth)
+{
+	if (NewMaxHealth > 0)
+	{
+		HealthMax = NewMaxHealth;
+		return true;
+	}
+	return false;
+}
+
+void UAttributeComponent::SetHealthFull()
+{
+	ApplyHealthChange(GetOwner(), HealthMax - Health);
+}
+
 
 UAttributeComponent* UAttributeComponent::GetAttributeComp(AActor* FromActor)
 {
@@ -158,6 +169,9 @@ void UAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(UAttributeComponent, Health);
 	DOREPLIFETIME(UAttributeComponent, HealthMax);
+	DOREPLIFETIME(UAttributeComponent, LifeMax);
+	DOREPLIFETIME(UAttributeComponent, Health);
+	DOREPLIFETIME(UAttributeComponent, Life);
+	DOREPLIFETIME(UAttributeComponent, bIsPlayer);
 }

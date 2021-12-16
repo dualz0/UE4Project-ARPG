@@ -37,11 +37,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	UAbilityComponent* GetOwningComponent() const;
 
-	/* Tags added to owning actor when activated, removed when action stops */
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer GrantsTags;
 
-	/* Action can only start if OwningActor has none of these Tags applied */
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer BlockedTags;
 

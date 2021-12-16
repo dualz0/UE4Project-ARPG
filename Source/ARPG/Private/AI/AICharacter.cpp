@@ -8,26 +8,30 @@
 #include "BrainComponent.h"
 #include "Perception/PawnSensingComponent.h"
 #include "HealthUserWidget.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AAICharacter::AAICharacter()
 {
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
     
     AttributeComp = CreateDefaultSubobject<UAttributeComponent>("AttributeComp");
-	AttributeComp->SetLife(1);
-	
+		
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
     
     TimeToHitParamName = "HitFlashTime";
 }
-    
-    
+
 void AAICharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &AAICharacter::OnPawnSeen);
 	AttributeComp->OnHealthChanged.AddDynamic(this, &AAICharacter::OnHealthChanged);
+
+	AttributeComp->SetLife(1);
+	// 怪物血量随时间累计增强
+	AttributeComp->SetMaxHealth(AttributeComp->GetHealth() + UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()));
+	AttributeComp->SetHealthFull();
 }
 
 

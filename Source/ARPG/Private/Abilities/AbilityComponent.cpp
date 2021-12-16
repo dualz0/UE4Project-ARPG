@@ -102,12 +102,9 @@ bool UAbilityComponent::StartAbilityByName(AActor* Instigator, FName AbilityName
 		{
 			if (!Ability->CanStart(Instigator))
 			{
-				FString FailedMsg = FString::Printf(TEXT("Failed to run: %s"), *AbilityName.ToString());
-				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailedMsg);
 				continue;
 			}
 
-			// Is Client?
 			if (!GetOwner()->HasAuthority())
 			{
 				ServerStartAbility(Instigator, AbilityName);
@@ -130,7 +127,6 @@ bool UAbilityComponent::StopAbilityByName(AActor* Instigator, FName AbilityName)
 		{
 			if (Ability->IsRunning())
 			{
-				// Is Client?
 				if (!GetOwner()->HasAuthority())
 				{
 					ServerStopAbility(Instigator, AbilityName);

@@ -25,8 +25,6 @@ bool UAbility::CanStart_Implementation(AActor* Instigator)
 
 void UAbility::StartAbility_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp, Log, TEXT("Running: %s"), *GetNameSafe(this));
-
 	UAbilityComponent* Comp = GetOwningComponent();	
 	Comp->ActiveGameplayTags.AppendTags(GrantsTags);
 
@@ -37,8 +35,6 @@ void UAbility::StartAbility_Implementation(AActor* Instigator)
 
 void UAbility::StopAbility_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp, Log, TEXT("Stopped: %s"), *GetNameSafe(this));
-
 	UAbilityComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.RemoveTags(GrantsTags);
 
@@ -59,8 +55,6 @@ UWorld* UAbility::GetWorld() const
 
 UAbilityComponent* UAbility::GetOwningComponent() const
 {
-	// return Cast<UAbilityComponent>(GetOuter());
-
 	return AbilityComp;
 }
 

@@ -72,4 +72,7 @@ protected:
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	void Respawn();
+
 };

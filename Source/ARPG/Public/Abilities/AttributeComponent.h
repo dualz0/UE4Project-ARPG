@@ -80,9 +80,6 @@ public:
 	float GetHealthMax() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	void SetHealthFull();
-
-	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool IsFullHealth() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
@@ -90,4 +87,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetLifeMax() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool SetMaxHealth(float NewMaxHealth);
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	void SetHealthFull();
 };
