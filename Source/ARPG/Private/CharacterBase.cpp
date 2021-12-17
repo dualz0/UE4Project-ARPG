@@ -120,30 +120,12 @@ void ACharacterBase::OnHealthChanged(AActor* InstigatorActor, UAttributeComponen
 
 void ACharacterBase::OnLifeChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp)
 {
-	// APlayerController* PC = Cast<APlayerController>(GetController());
-	// DisableInput(PC);
-	
-	if (AttributeComp->GetLife() > 0)
-	{
-		// reborn
-		// AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax());
 
-
-	}
-	else
-	{
-		// GameOver
-		
-	}
 }
 
 void ACharacterBase::Respawn()
 {
-	// APlayerController* PC = Cast<APlayerController>(GetController());
-	// EnableInput(PC);
-
 	ActiveHealthBar = CreateWidget<UHealthUserWidget>(GetWorld(), HealthBarWidgetClass);
 	ActiveHealthBar->AttachedActor = this;
 	ActiveHealthBar->AddToViewport();
-
-} 
+}
