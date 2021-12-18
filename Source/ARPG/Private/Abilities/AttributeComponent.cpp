@@ -59,12 +59,6 @@ bool UAttributeComponent::ApplyLifeChange(AActor* InstigatorActor, float Delta)
 	// OnLifeChanged.Broadcast(InstigatorActor, this);
 	MulticastLifeChanged_Implementation(InstigatorActor, Delta);
 
-	AMyGameModeBase* GM = GetWorld()->GetAuthGameMode<AMyGameModeBase>();
-	if (GM)
-	{
-		
-	}
-
 	return true;
 }
 
@@ -95,7 +89,6 @@ bool UAttributeComponent::IsFullHealth() const
 
 bool UAttributeComponent::IsAlive() const
 {
-	// return Life > 0;
 	return Health > 0;
 }
 
