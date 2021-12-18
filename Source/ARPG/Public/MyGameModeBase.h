@@ -24,6 +24,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TSubclassOf<AActor> MinionClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	TSubclassOf<AActor> KnockAIClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UEnvQuery* SpawnBotQuery;

@@ -16,7 +16,7 @@
 AMyGameModeBase::AMyGameModeBase()
 {
 	SpawnTimerInterval = 2.0f;
-	
+
 	MaxBotCount = 4.0;
 	if (DifficultyCurve)
 	{
@@ -83,7 +83,16 @@ void AMyGameModeBase::OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper
 
 	if (Locations.IsValidIndex(0))
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+		float RandomNum = rand() % 2;
+		
+		if (RandomNum < 1)
+		{
+			GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+		}
+		else
+		{
+			GetWorld()->SpawnActor<AActor>(KnockAIClass, Locations[0], FRotator::ZeroRotator);
+		}
 	}
 }
 
@@ -163,9 +172,6 @@ void AMyGameModeBase::RespawnPlayerElapsed(ACharacterBase* Player, AController* 
 {
 	if (ensure(Controller))
 	{
-		// Controller->UnPossess();
-		// RestartPlayer(Controller);
-
 		Player->EnableInput(Cast<APlayerController>(Controller));
 		
 		Player->Respawn();
@@ -177,9 +183,6 @@ void AMyGameModeBase::RespawnPlayerElapsed(ACharacterBase* Player, AController* 
 
 void AMyGameModeBase::OnActorKilled(AActor* VictimActor, UAttributeComponent* VictimAttributes, AActor* Killer)
 {
-	
-	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
-
 	ACharacterBase* Player = Cast<ACharacterBase>(VictimActor);
 	if (Player)
 	{
