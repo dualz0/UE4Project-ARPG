@@ -50,16 +50,6 @@ protected:
 	void MoveForward(float Value);
 	
 	void MoveRight(float Value);
-
-	void PrimaryAttack();
-	
-	void BlackHoleAttack();
-
-	void Dash();
-
-	void SprintStart();
-
-	void SprintStop();
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, UAttributeComponent* OwningComp, float NewHealth, float Delta);
@@ -74,4 +64,19 @@ public:
 
 	UFUNCTION()
 	void Respawn();
+
+	UFUNCTION(BlueprintCallable)
+	void PrimaryAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void BlackHoleAttack();
+	
+	UFUNCTION(BlueprintCallable)
+	void Dash();
+
+	UFUNCTION(BlueprintCallable)
+	void SprintStart();
+	
+	UFUNCTION(BlueprintCallable)
+	void SprintStop();
 };

@@ -204,11 +204,6 @@ void AMyGameModeBase::OnActorKilled(AActor* VictimActor, UAttributeComponent* Vi
 		if (AMyPlayerState* PS = KillerPawn->GetPlayerState<AMyPlayerState>())
 		{
 			PS->AddCredits(CreditsPerKill);
-			
-			if (GEngine)
-            {
-            	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Credis: %d"), PS->GetCredits()));
-            }
 		}
 	}
 }
