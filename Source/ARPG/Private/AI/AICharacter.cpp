@@ -69,7 +69,7 @@ void AAICharacter::OnHealthChanged(AActor* InstigatorActor, UAttributeComponent*
 			GetMesh()->SetAllBodiesSimulatePhysics(true);
 			GetMesh()->SetCollisionProfileName("Ragdoll");
 			
-			SetLifeSpan(10.0f);
+			SetLifeSpan(2.0f);
 		}
 	}
 }
