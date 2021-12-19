@@ -33,8 +33,8 @@ ACharacterBase::ACharacterBase()
 	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
-
-	TimeToHitParamName = "TimeToHit";
+	
+	TimeToHitParamName = "HitFlashTime";
 }
 
 void ACharacterBase::PostInitializeComponents()

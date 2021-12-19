@@ -21,7 +21,6 @@ void AProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
 		if (AttributeComp)
 		{
-			// AttributeComp->ApplyHealthChange(this, -DamageAmount);
 			AttributeComp->ApplyHealthChange(GetInstigator(), -DamageAmount);
 
 			Explode();

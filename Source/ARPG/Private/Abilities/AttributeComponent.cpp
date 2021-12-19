@@ -56,7 +56,7 @@ bool UAttributeComponent::ApplyLifeChange(AActor* InstigatorActor, float Delta)
 		return false;
 	}
 	Life--;
-	// OnLifeChanged.Broadcast(InstigatorActor, this);
+
 	MulticastLifeChanged_Implementation(InstigatorActor, Delta);
 
 	return true;
