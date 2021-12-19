@@ -38,9 +38,6 @@ void ADashProjectile::Explode_Implementation()
 
 	FTimerHandle TimerHandle_DelayedTeleport;
 	GetWorldTimerManager().SetTimer(TimerHandle_DelayedTeleport, this, &ADashProjectile::TeleportInstigator, TeleportDelay);
-
-	// Skip base implementation as it will destroy actor
-	//Super::Explode_Implementation();
 }
 
 
@@ -49,7 +46,6 @@ void ADashProjectile::TeleportInstigator()
 	AActor* ActorToTeleport = GetInstigator();
 	if (ensure(ActorToTeleport))
 	{
-		// Keep instigator rotation or it may end up jarring
 		ActorToTeleport->TeleportTo(GetActorLocation(), ActorToTeleport->GetActorRotation(), false, false);
 	}
 }

@@ -36,11 +36,6 @@ void APickup::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 			UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
 			if (AttributeComp && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
 			{
-				if (GEngine)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red,
-					FString::Printf(TEXT("Health: %f"), AttributeComp->GetHealth()));
-				}
 				AttributeComp->ApplyHealthChange(this, HealValue);
 				HideAndCooldownPowerup();
 			}
@@ -80,11 +75,6 @@ void APickup::ServerInteract_Implementation(AActor* OtherActor)
 		UAttributeComponent* AttributeComp = Cast<UAttributeComponent>(OtherActor->GetComponentByClass(UAttributeComponent::StaticClass()));
 		if (AttributeComp && AttributeComp->IsPlayer() && AttributeComp->GetHealth() < AttributeComp->GetHealthMax())
 		{
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("ServerInteract_Implementation: Overlap")));
-			}
-			
 			AttributeComp->ApplyHealthChange(this, HealValue);
 			HideAndCooldownPowerup();
 		}
@@ -96,4 +86,4 @@ void APickup::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APickup, bIsActive);
-} 
+}

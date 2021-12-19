@@ -33,12 +33,8 @@ void UBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 					{
 						bHasLOS = MyController->LineOfSightTo(TargetActor);
 					}
-
-
 					BlackBoardComp->SetValueAsBool(AttackRangeKey.SelectedKeyName, (bWithinRange && bHasLOS));
 				}
-
-
 			}
 		}
 	}
